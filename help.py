@@ -7,7 +7,7 @@ def main():
     # Use secrets
     token = os.getenv('HF_TOKEN')
     username = os.getenv('USERNAME')
-    repo_name = 'my-new-model'
+    repo_name = 'tt-oilwells-demo-model'
     repo_id = f'{username}/{repo_name}'
 
     # Save the token using HfFolder
