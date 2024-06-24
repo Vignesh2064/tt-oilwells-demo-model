@@ -25,4 +25,4 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         USERNAME: ${{ secrets.USERNAME }}
       run: |
-        python upload_model.py
+        python help.py
