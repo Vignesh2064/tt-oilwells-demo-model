@@ -1,2 +1,2 @@
-torch==1.10.0  # Replace with your desired version of PyTorch
+torch==1.10.0
 transformers==4.15.0
