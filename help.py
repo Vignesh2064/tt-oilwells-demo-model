@@ -6,9 +6,9 @@ from git import Repo
 def main():
     # Retrieve the token and username from environment variables
     hf_token = os.getenv('HF_TOKEN')
-    github_token = os.getenv('GITHUB_TOKEN')
+    github_token = os.getenv('GIT_TOKEN')
     hf_username = os.getenv('HF_USERNAME')
-    github_username = os.getenv('GITHUB_USERNAME')
+    github_username = os.getenv('GIT_USERNAME')
     repo_name = "tt-oilwells-demo-model"
     repo_id = f"{hf_username}/{repo_name}"
 
