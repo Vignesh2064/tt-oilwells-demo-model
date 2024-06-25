@@ -4,15 +4,13 @@ from huggingface_hub import Repository, HfFolder
 from git import Repo
 
 def main():
-    # Retrieve the token and username from environment variables
+    # Retrieve the tokens and usernames from environment variables
     hf_token = os.getenv('HF_TOKEN')
-    github_token = os.getenv('GIT_TOKEN')
+    github_token = os.getenv('GITHUB_TOKEN')
     hf_username = os.getenv('HF_USERNAME')
-    github_username = os.getenv('GIT_USERNAME')
-    repo_name = "tt-oilwells-demo-model"
-    repo_id = f"{hf_username}/{repo_name}"
+    github_username = os.getenv('GITHUB_USERNAME')
 
-    # Save the token
+    # Save the Hugging Face token
     HfFolder.save_token(hf_token)
 
     # Initialize a tokenizer and a model from scratch
@@ -20,14 +18,12 @@ def main():
     model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=2)
 
     # Save the model and tokenizer to a directory
-    model_dir = repo_name
+    model_dir = "my-new-model"
+    os.makedirs(model_dir, exist_ok=True)
     tokenizer.save_pretrained(model_dir)
     model.save_pretrained(model_dir)
 
-    # If the directory exists and is a git repository, use it
-    if not os.path.exists(model_dir):
-        os.makedirs(model_dir)
-
+    # Initialize or use existing git repository
     if not os.path.exists(os.path.join(model_dir, '.git')):
         print(f"Initializing a new git repository in {model_dir}")
         repo = Repo.init(model_dir)
@@ -35,17 +31,18 @@ def main():
         print(f"Directory {model_dir} is already a git repository")
         repo = Repo(model_dir)
 
-    # Set the remote origin and push
-    origin_exists = any(remote.name == 'origin' for remote in repo.remotes)
-    if not origin_exists:
-        repo.create_remote('origin', f'https://{github_username}:{github_token}@github.com/{github_username}/{repo_name}.git')
+    # Set remote origin
+    if not repo.remotes:
+        remote_url = f'https://{github_username}:{github_token}@github.com/{hf_username}/{repo_name}.git'
+        repo.create_remote('origin', url=remote_url)
+        print(f"Remote 'origin' set to {remote_url}")
 
-    # Add and commit the model files to the repository
+    # Add and commit the model files
     repo.git.add(A=True)
     repo.index.commit("Initial commit of the model")
 
-    # Push the model to the GitHub repository
-    repo.remotes.origin.push(refspec='HEAD:refs/heads/main')
+    # Push to the GitHub repository
+    repo.remotes.origin.push(refspec='HEAD:main')
 
 if __name__ == "__main__":
     main()
