@@ -1,6 +1,9 @@
 name: Upload Model to Hugging Face
 
-on: [push]
+on:
+  push:
+    branches:
+      - main  # Adjust as per your branch name
 
 jobs:
   upload-model:
@@ -23,7 +26,7 @@ jobs:
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        HF_USERNAME: "imvignesh"
-        GITHUB_USERNAME: "vignesh2064"
+        HF_USERNAME: imvignesh
+        GITHUB_USERNAME: vignesh2064
       run: |
         python help.py
