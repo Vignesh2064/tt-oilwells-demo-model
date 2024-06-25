@@ -13,11 +13,17 @@ def main():
     Repo.clone_from(github_repo_url, repo_dir)
     os.chdir(repo_dir)
 
-    # Clone the Hugging Face repository to a different directory
-    hf_repo_dir = "hf_repo"
-    hf_repo = Repo.clone_from(f"https://huggingface.co/{hf_username}/{hf_repo_name}", hf_repo_dir, env={"HUGGINGFACE_TOKEN": hf_token})
+    # Add the Hugging Face repository as a remote
+    hf_remote_url = f"https://huggingface.co/{hf_username}/{hf_repo_name}"
+    repo = Repo(".")
+    repo.create_remote("hf_origin", hf_remote_url)
 
-    print("Hugging Face repository cloned successfully.")
+    # Push the GitHub repository files to Hugging Face
+    repo.git.add(".")
+    repo.index.commit("Initial commit from GitHub repository")
+    repo.git.push("--set-upstream", "hf_origin", "HEAD:main")
+
+    print("Files pushed successfully to Hugging Face repository.")
 
 if __name__ == "__main__":
     main()
