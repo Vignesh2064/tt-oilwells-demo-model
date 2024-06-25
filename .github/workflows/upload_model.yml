@@ -24,4 +24,4 @@ jobs:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
         USERNAME: ${{ secrets.USERNAME }}
       run: |
-        python help.py  # Replace with your actual script name
+        python help.py
