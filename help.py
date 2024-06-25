@@ -1,12 +1,13 @@
+import os
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from huggingface_hub import Repository, HfFolder
-import os
+from git import Repo
 
 def main():
     # Retrieve the token and username from environment variables
     hf_token = os.getenv('HF_TOKEN')
     username = os.getenv('USERNAME')
-    repo_name = "my-new-model"
+    repo_name = "tt-oilwells-demo-model"
     repo_id = f"{username}/{repo_name}"
 
     # Save the token
@@ -21,15 +22,28 @@ def main():
     tokenizer.save_pretrained(model_dir)
     model.save_pretrained(model_dir)
 
-    # Create a new repository or clone an existing one
-    repo = Repository(local_dir=model_dir, clone_from=repo_id, use_auth_token=hf_token)
+    # If the directory exists and is a git repository, use it
+    if not os.path.exists(model_dir):
+        os.makedirs(model_dir)
+
+    if not os.path.exists(os.path.join(model_dir, '.git')):
+        print(f"Initializing a new git repository in {model_dir}")
+        repo = Repo.init(model_dir)
+    else:
+        print(f"Directory {model_dir} is already a git repository")
+        repo = Repo(model_dir)
+
+    # Set the remote origin and push
+    origin_exists = any(remote.name == 'origin' for remote in repo.remotes)
+    if not origin_exists:
+        repo.create_remote('origin', f'https://github.com/{username}/{repo_name}.git')
 
     # Add and commit the model files to the repository
-    repo.git_add(auto_lfs_track=True)
-    repo.git_commit("Initial commit of the model")
+    repo.git.add(A=True)
+    repo.index.commit("Initial commit of the model")
 
-    # Push the model to the Hugging Face Hub
-    repo.git_push()
+    # Push the model to the GitHub repository
+    repo.remotes.origin.push(refspec='HEAD:refs/heads/main')
 
 if __name__ == "__main__":
     main()
