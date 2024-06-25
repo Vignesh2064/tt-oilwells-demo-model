@@ -9,7 +9,7 @@ def main():
     github_token = os.getenv('GITHUB_TOKEN')
     hf_username = os.getenv('HF_USERNAME')
     github_username = os.getenv('GITHUB_USERNAME')
-    repo_name = "my-new-model"
+    repo_name = "tt-oilwells-demo-model"
     repo_id = f"{hf_username}/{repo_name}"
 
     # Save the token
