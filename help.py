@@ -14,9 +14,14 @@ def main():
     os.chdir(repo_dir)
 
     # Add the Hugging Face repository as a remote
-    hf_remote_url = f"https://huggingface.co/{hf_username}/{hf_repo_name}"
+    hf_remote_url = f"https://{hf_username}:{hf_token}@huggingface.co/{hf_username}/{hf_repo_name}.git"
     repo = Repo(".")
-    repo.create_remote("hf_origin", hf_remote_url)
+
+    try:
+        hf_remote = repo.create_remote("hf_origin", hf_remote_url)
+    except:
+        hf_remote = repo.remote("hf_origin")
+        hf_remote.set_url(hf_remote_url)
 
     # Push the GitHub repository files to Hugging Face
     repo.git.add(".")
