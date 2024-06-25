@@ -1,7 +1,7 @@
 import os
 import shutil
 from git import Repo
-from huggingface_hub import HfApi
+from huggingface_hub import Repository, HfFolder
 
 # GitHub repository details
 github_username = "Vignesh2064"
@@ -20,17 +20,18 @@ def main():
         shutil.rmtree(repo_dir)
     Repo.clone_from(github_repo_url, repo_dir)
 
-    # Initialize the Hugging Face API
-    api = HfApi()
+    # Initialize Hugging Face Repository
+    HfFolder.save_token(hf_token)
+    repo = Repository(local_dir=repo_dir, clone_from=f"{hf_username}/{hf_repo_name}", use_auth_token=True)
 
-    # Upload files from GitHub repo to existing Hugging Face repo
-    repo_id = f"{hf_username}/{hf_repo_name}"
-    files_to_upload = os.listdir(repo_dir)
-    for file_name in files_to_upload:
-        file_path = os.path.join(repo_dir, file_name)
-        api.upload_file(repo_id, file_path, token=hf_token)
+    # Add all files and commit
+    repo.git_add(auto_lfs_track=True)
+    repo.git_commit("Add files from GitHub repository")
 
-    print("Files uploaded successfully to Hugging Face repository.")
+    # Push changes to Hugging Face Hub
+    repo.git_push()
+
+    print("Files pushed successfully to Hugging Face repository.")
 
 if __name__ == "__main__":
     main()
