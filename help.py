@@ -6,9 +6,9 @@ from git import Repo
 def main():
     # Retrieve the tokens and usernames from environment variables
     hf_token = os.getenv('HF_TOKEN')
-    github_token = os.getenv('GITHUB_TOKEN')
+    github_token = os.getenv('GIT_TOKEN')
     hf_username = os.getenv('HF_USERNAME')
-    github_username = os.getenv('GITHUB_USERNAME')
+    github_username = os.getenv('GIT_USERNAME')
 
     # Save the Hugging Face token
     HfFolder.save_token(hf_token)
