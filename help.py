@@ -23,11 +23,8 @@ def main():
     # Initialize the Hugging Face API
     api = HfApi()
 
-    # Create or use existing Hugging Face repository
+    # Upload files from GitHub repo to existing Hugging Face repo
     repo_id = f"{hf_username}/{hf_repo_name}"
-    hf_repo = api.create_repo(repo_id, token=hf_token)
-
-    # Upload files from GitHub repo to Hugging Face repo
     files_to_upload = os.listdir(repo_dir)
     for file_name in files_to_upload:
         file_path = os.path.join(repo_dir, file_name)
