@@ -30,4 +30,4 @@ jobs:
           GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
           GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
-          python upload_to_huggingface.py
+          python help.py
