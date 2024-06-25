@@ -23,6 +23,9 @@ def main():
     tokenizer.save_pretrained(model_dir)
     model.save_pretrained(model_dir)
 
+    # Define repository details
+    repo_name = "tt-oilwells-demo-model"  # Replace with your repository name
+
     # Initialize or use existing git repository
     if not os.path.exists(os.path.join(model_dir, '.git')):
         print(f"Initializing a new git repository in {model_dir}")
