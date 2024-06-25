@@ -1,49 +1,37 @@
 import os
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-from huggingface_hub import Repository, HfFolder
+import shutil
 from git import Repo
+from huggingface_hub import Repository
+
+# GitHub repository details
+github_username = "Vignesh2064"
+github_repo_name = "tt-oilwells-demo-model"
+github_repo_url = f"https://github.com/{github_username}/{github_repo_name}.git"
+
+# Hugging Face repository details
+hf_username = "Imvignesh"
+hf_repo_name = "tt-oilwells-demo-model"
 
 def main():
-    # Retrieve the tokens and usernames from environment variables
-    hf_token = os.getenv('HF_TOKEN')
-    hf_username = os.getenv('HF_USERNAME')
-    github_username = os.getenv('GIT_USERNAME')  # Updated to match GitHub Secrets name
-    github_token = os.getenv('GIT_TOKEN')        # Updated to match GitHub Secrets name
+    # Clone the GitHub repository
+    repo_dir = "github_repo"
+    if os.path.exists(repo_dir):
+        shutil.rmtree(repo_dir)
+    Repo.clone_from(github_repo_url, repo_dir)
 
-    # Save the Hugging Face token
-    HfFolder.save_token(hf_token)
+    # Initialize or use existing Hugging Face repository
+    hf_repo = Repository()
+    hf_repo.clone_from(f"{hf_username}/{hf_repo_name}")
 
-    # Initialize a tokenizer and a model from scratch
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-    model = AutoModelForSequenceClassification.from_pretrained("bert-base-uncased", num_labels=2)
+    # Copy files from GitHub repo to Hugging Face repo
+    files_to_copy = os.listdir(repo_dir)
+    for file_name in files_to_copy:
+        shutil.copy(os.path.join(repo_dir, file_name), hf_repo_name)
 
-    # Save the model and tokenizer to a directory
-    model_dir = "my-new-model"
-    os.makedirs(model_dir, exist_ok=True)
-    tokenizer.save_pretrained(model_dir)
-    model.save_pretrained(model_dir)
-
-    # Initialize or use existing git repository
-    if not os.path.exists(os.path.join(model_dir, '.git')):
-        print(f"Initializing a new git repository in {model_dir}")
-        repo = Repo.init(model_dir)
-    else:
-        print(f"Directory {model_dir} is already a git repository")
-        repo = Repo(model_dir)
-
-    # Set remote origin for Hugging Face repository
-    if not repo.remotes:
-        hf_repo_name = "tt-oilwells-demo-model"  # Hugging Face repository name
-        hf_remote_url = f'git clone https://huggingface.co/Imvignesh/tt-oilwells-demo-model'
-        repo.create_remote('origin', url=hf_remote_url)
-        print(f"Remote 'origin' set to {hf_remote_url}")
-
-    # Add and commit the model files
-    repo.git.add(A=True)
-    repo.index.commit("Initial commit of the model")
-
-    # Push to the Hugging Face repository
-    repo.remotes.origin.push(refspec='HEAD:main')
+    # Add, commit, and push to Hugging Face repo
+    hf_repo.git_add("*")
+    hf_repo.git_commit("Initial commit from GitHub repo")
+    hf_repo.git_push()
 
 if __name__ == "__main__":
     main()
