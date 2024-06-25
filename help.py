@@ -6,9 +6,11 @@ from git import Repo
 def main():
     # Retrieve the token and username from environment variables
     hf_token = os.getenv('HF_TOKEN')
-    username = os.getenv('USERNAME')
+    github_token = os.getenv('GITHUB_TOKEN')
+    hf_username = os.getenv('HF_USERNAME')
+    github_username = os.getenv('GITHUB_USERNAME')
     repo_name = "my-new-model"
-    repo_id = f"{username}/{repo_name}"
+    repo_id = f"{hf_username}/{repo_name}"
 
     # Save the token
     HfFolder.save_token(hf_token)
@@ -36,7 +38,7 @@ def main():
     # Set the remote origin and push
     origin_exists = any(remote.name == 'origin' for remote in repo.remotes)
     if not origin_exists:
-        repo.create_remote('origin', f'https://github.com/{username}/{repo_name}.git')
+        repo.create_remote('origin', f'https://{github_username}:{github_token}@github.com/{github_username}/{repo_name}.git')
 
     # Add and commit the model files to the repository
     repo.git.add(A=True)
