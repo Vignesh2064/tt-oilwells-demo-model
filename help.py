@@ -7,7 +7,7 @@ def main():
     # Retrieve the token and username from environment variables
     hf_token = os.getenv('HF_TOKEN')
     username = os.getenv('USERNAME')
-    repo_name = "tt-oilwells-demo-model"
+    repo_name = "my-new-model"
     repo_id = f"{username}/{repo_name}"
 
     # Save the token
