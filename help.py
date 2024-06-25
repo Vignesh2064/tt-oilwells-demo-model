@@ -34,7 +34,7 @@ def main():
     # Set remote origin for Hugging Face repository
     if not repo.remotes:
         hf_repo_name = "tt-oilwells-demo-model"  # Hugging Face repository name
-        hf_remote_url = f'https://{hf_username}:{hf_token}@github.com/{hf_username}/{hf_repo_name}.git'
+        hf_remote_url = f'git clone https://huggingface.co/Imvignesh/tt-oilwells-demo-model'
         repo.create_remote('origin', url=hf_remote_url)
         print(f"Remote 'origin' set to {hf_remote_url}")
 
