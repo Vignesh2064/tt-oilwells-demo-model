@@ -1,7 +1,7 @@
 import os
 import shutil
 from git import Repo
-from huggingface_hub import Repository
+from huggingface_hub import HfApi
 
 # GitHub repository details
 github_username = "Vignesh2064"
@@ -11,27 +11,29 @@ github_repo_url = f"https://github.com/{github_username}/{github_repo_name}.git"
 # Hugging Face repository details
 hf_username = "Imvignesh"
 hf_repo_name = "tt-oilwells-demo-model"
+hf_token = os.getenv('HF_TOKEN')  # Ensure HF_TOKEN is set in your environment secrets
 
 def main():
-    # Clone the GitHub repository
+    # Clone the GitHub repository locally
     repo_dir = "github_repo"
     if os.path.exists(repo_dir):
         shutil.rmtree(repo_dir)
     Repo.clone_from(github_repo_url, repo_dir)
 
-    # Initialize or use existing Hugging Face repository
-    hf_repo = Repository()
-    hf_repo.clone_from(f"{hf_username}/{hf_repo_name}")
+    # Initialize the Hugging Face API
+    api = HfApi()
 
-    # Copy files from GitHub repo to Hugging Face repo
-    files_to_copy = os.listdir(repo_dir)
-    for file_name in files_to_copy:
-        shutil.copy(os.path.join(repo_dir, file_name), hf_repo_name)
+    # Create or use existing Hugging Face repository
+    repo_id = f"{hf_username}/{hf_repo_name}"
+    hf_repo = api.create_repo(repo_id, token=hf_token, exists_ok=True)
 
-    # Add, commit, and push to Hugging Face repo
-    hf_repo.git_add("*")
-    hf_repo.git_commit("Initial commit from GitHub repo")
-    hf_repo.git_push()
+    # Upload files from GitHub repo to Hugging Face repo
+    files_to_upload = os.listdir(repo_dir)
+    for file_name in files_to_upload:
+        file_path = os.path.join(repo_dir, file_name)
+        api.upload_file(repo_id, file_path, token=hf_token)
+
+    print("Files uploaded successfully to Hugging Face repository.")
 
 if __name__ == "__main__":
     main()
