@@ -25,8 +25,8 @@ jobs:
     - name: Upload Model to Hugging Face
       env:
         HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
         HF_USERNAME: imvignesh
-        GITHUB_USERNAME: vignesh2064
+        GITHUB_USERNAME: Vignesh2064
       run: |
         python help.py
