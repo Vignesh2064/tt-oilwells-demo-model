@@ -3,6 +3,7 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 from huggingface_hub import Repository, HfFolder
 import os
 
+
 def main():
     # Use secrets
     token = os.getenv('HF_TOKEN')
